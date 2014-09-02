@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class BlocoInfo {
 	public ETipo tipo;
 	public EDirecao direcao;
@@ -12,6 +13,7 @@ public class BlocoInfo {
 		x = pX;
 		z = pZ;
 		tipo = ETipo.Vazio;
+		direcao = EDirecao.Direita;
 		pessoa = null;
 	}
 }
@@ -20,8 +22,7 @@ public enum ETipo {
 	Vazio,
 	Parede,
 	Cadeira,
-	PortaDireita,
-	PortaEsquerda
+	Porta
 }
 
 public enum EDirecao {
@@ -72,45 +73,58 @@ public class Fase : MonoBehaviour {
 	*/
 
 	#region Statics
-	public static bool Disponivel (BlocoInfo bloco, EDirecao dirAproximacao) {
+	public static bool Permitido (BlocoInfo origem, EDirecao dirAlvo) {
 
-		if (!Valido (bloco, dirAproximacao)) {
+		EDirecao dirOrigem = (EDirecao) ((int) dirAlvo * -1);
+
+		// checa se alvo existe
+		if (!Valido (origem, dirAlvo)) {
+			print ("permitido: invalido");
+			return false;
+		}
+		BlocoInfo alvo = Vizinho (origem, dirAlvo);
+
+		if (origem.tipo == ETipo.Cadeira &&
+		    (Mathf.Abs ((int) dirOrigem) == Mathf.Abs ((int) alvo.direcao))){
 			return false;
 		}
 
-		BlocoInfo alvo = Vizinho (bloco, dirAproximacao);
-
+		// dependendo do tipo do alvo
 		switch (alvo.tipo) {
-		case ETipo.Parede : return false;
-		case ETipo.Vazio : return true;
-		case ETipo.PortaDireita :
-		case ETipo.PortaEsquerda : 
-			if (alvo.pessoa == null) {
+		case ETipo.Parede : print ("permitido: parede"); return false;
+		case ETipo.Vazio : print ("permitido: vazio"); return true; // a melhorar
+		case ETipo.Porta : 
+			if (alvo.pessoa == Pessoa.nula) {
+				print ("permitido: porta vazia");
 				return true;
 			}
+			print ("permitido: porta cheia");
 			return false;
 		case ETipo.Cadeira : 
 			// nao tem ninguem na cadeira
-			if (alvo.pessoa == null) {
-				if ((int) dirAproximacao != (int) alvo.direcao * -1) {
-					print ("cadeira vazia, direcao ok");
-					return true;
-				} 
-				else {
+			if (alvo.pessoa == Pessoa.nula) {
+				if ( Mathf.Abs ((int) dirOrigem) == Mathf.Abs ((int) alvo.direcao) ) {
 					print ("cadeira vazia, direcao ruim");
 					return false;
+				} 
+				else {
+					print ("cadeira vazia, direcao ok");
+					return true;
 				}
 			}
 			// tem alguem na cadeira
-			if (bloco.pessoa != null) {
+			else {
+				print ("tem alguem na cadeira");
 				// tem espaco pra empurrar
-				if (Disponivel (Vizinho (alvo, dirAproximacao), dirAproximacao)) {
+				/*
+				if (Permitido (Vizinho (alvo, dirAproximacao), dirAproximacao)) {
 					// tem que empurrar essa pessoa
 					return true;
 				}
 				else {
 					return false;
 				}
+				*/
 			}
 			break;
 		}
@@ -118,7 +132,7 @@ public class Fase : MonoBehaviour {
 	}
 
 	public static bool Valido (int x, int z) {
-		if (x >= mapa.GetLength(0) || x < 0 || z >= mapa.GetLength(1) || z < 0) {
+		if (x >= mapa.GetLength (0) || x < 0 || z >= mapa.GetLength (1) || z < 0) {
 			return false;
 		}
 		return true;
@@ -146,14 +160,18 @@ public class Fase : MonoBehaviour {
 
 	public static bool Mover (Pessoa pessoa, EDirecao direcao) {
 		BlocoInfo blocoOrigem = mapa[pessoa.x, pessoa.z];
-		if (Disponivel (blocoOrigem, direcao)) {
-			BlocoInfo blocoAlvo = Vizinho (blocoOrigem, direcao);
-			blocoOrigem.pessoa = null;
-			blocoAlvo.pessoa = pessoa;
-			pessoa.x = blocoAlvo.x;
-			pessoa.z = blocoAlvo.z;
-			return true;
+		BlocoInfo blocoAlvo = Vizinho (blocoOrigem, direcao);
+		if (blocoAlvo != null) {
+			if (Permitido (blocoOrigem, direcao)) {
+				blocoAlvo.pessoa = pessoa;
+				blocoOrigem.pessoa = Pessoa.nula;
+				pessoa.x = blocoAlvo.x;
+				pessoa.z = blocoAlvo.z;
+				return true;
+			}
+			print ("nao permitido");
 		}
+		print ("alvo nulo");
 		return false;
 	}
 	#endregion

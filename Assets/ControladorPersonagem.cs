@@ -3,17 +3,16 @@ using System.Collections;
 
 public class ControladorPersonagem : MonoBehaviour {
 	public Pessoa pessoa;
-	private Fase _fase;
 	public bool bilhete = true;
 
 	void Start () {
-		_fase = GameObject.Find("Fase").GetComponent<Fase>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
 		pessoa.x = Mathf.FloorToInt(transform.position.x);
 		pessoa.z = Mathf.FloorToInt(transform.position.z);
+		Fase.mapa[pessoa.x, pessoa.z].pessoa = pessoa;
+	}
+
+	// Update is called once per frame
+	void Update () {
 
 		if (Input.GetKeyDown(KeyCode.UpArrow)) {
 			Fase.Mover (pessoa, EDirecao.Cima);
