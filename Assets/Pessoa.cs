@@ -1,17 +1,20 @@
 using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
-public class Pessoa {
-	public int parada;
-	public int x;
-	public int z;
-	public Pessoa () {
-		parada = -1;
-		x = -1;
-		z = -1;
+public class Pessoa : MonoBehaviour
+{
+	public PessoaInfo info;
+
+	// Use this for initialization
+	void Start ()
+	{
+
 	}
 
-	public static Pessoa nula = new Pessoa();
+	// Update is called once per frame
+	void Update ()
+	{
+
+	}
 }
 

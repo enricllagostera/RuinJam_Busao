@@ -2,31 +2,31 @@
 using System.Collections;
 
 public class ControladorPersonagem : MonoBehaviour {
-	public Pessoa pessoa;
-	public bool bilhete = true;
+	private PessoaInfo _pessoa;
 
 	void Start () {
-		pessoa.x = Mathf.FloorToInt(transform.position.x);
-		pessoa.z = Mathf.FloorToInt(transform.position.z);
-		Fase.mapa[pessoa.x, pessoa.z].pessoa = pessoa;
+		_pessoa = GetComponent<Pessoa>().info;
+		_pessoa.x = Mathf.FloorToInt(transform.position.x);
+		_pessoa.z = Mathf.FloorToInt(transform.position.z);
+		Fase.mapa[_pessoa.x, _pessoa.z].pessoa = _pessoa;
 	}
 
 	// Update is called once per frame
 	void Update () {
 
 		if (Input.GetKeyDown(KeyCode.UpArrow)) {
-			Fase.Mover (pessoa, EDirecao.Cima);
+			Fase.Mover (_pessoa, EDirecao.Cima);
 		}
 		if (Input.GetKeyDown(KeyCode.DownArrow)) {
-			Fase.Mover (pessoa, EDirecao.Baixo);
+			Fase.Mover (_pessoa, EDirecao.Baixo);
 		}
 		if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-			Fase.Mover (pessoa, EDirecao.Esquerda);
+			Fase.Mover (_pessoa, EDirecao.Esquerda);
 		}
 		if (Input.GetKeyDown(KeyCode.RightArrow)) {
-			Fase.Mover (pessoa, EDirecao.Direita);
+			Fase.Mover (_pessoa, EDirecao.Direita);
 		}
 
-		transform.position = new Vector3 (pessoa.x, transform.position.y, pessoa.z);
+		transform.position = new Vector3 (_pessoa.x, transform.position.y, _pessoa.z);
 	}
 }

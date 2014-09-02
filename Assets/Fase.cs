@@ -8,7 +8,7 @@ public class BlocoInfo {
 	public EDirecao direcao;
 	public int x;
 	public int z;
-	public Pessoa pessoa;
+	public PessoaInfo pessoa;
 	public BlocoInfo (int pX, int pZ) {
 		x = pX;
 		z = pZ;
@@ -84,8 +84,7 @@ public class Fase : MonoBehaviour {
 		}
 		BlocoInfo alvo = Vizinho (origem, dirAlvo);
 
-		if (origem.tipo == ETipo.Cadeira &&
-		    (Mathf.Abs ((int) dirOrigem) == Mathf.Abs ((int) alvo.direcao))){
+		if (origem.tipo == ETipo.Cadeira && (Mathf.Abs ((int) dirAlvo) == Mathf.Abs ((int) origem.direcao))){
 			return false;
 		}
 
@@ -94,7 +93,7 @@ public class Fase : MonoBehaviour {
 		case ETipo.Parede : print ("permitido: parede"); return false;
 		case ETipo.Vazio : print ("permitido: vazio"); return true; // a melhorar
 		case ETipo.Porta : 
-			if (alvo.pessoa == Pessoa.nula) {
+			if (alvo.pessoa == PessoaInfo.nula) {
 				print ("permitido: porta vazia");
 				return true;
 			}
@@ -102,7 +101,7 @@ public class Fase : MonoBehaviour {
 			return false;
 		case ETipo.Cadeira : 
 			// nao tem ninguem na cadeira
-			if (alvo.pessoa == Pessoa.nula) {
+			if (alvo.pessoa == PessoaInfo.nula) {
 				if ( Mathf.Abs ((int) dirOrigem) == Mathf.Abs ((int) alvo.direcao) ) {
 					print ("cadeira vazia, direcao ruim");
 					return false;
@@ -150,7 +149,9 @@ public class Fase : MonoBehaviour {
 
 	public static BlocoInfo Vizinho (BlocoInfo bloco, EDirecao direcao) {
 		switch (direcao) {
-		case EDirecao.Cima : if (Valido (bloco.x, bloco.z+1)) return mapa [bloco.x, bloco.z+1]; break;
+		case EDirecao.Cima : if (Valido (bloco.x, bloco.z+1)) 
+			return mapa [bloco.x, bloco.z+1]; 
+			break;
 		case EDirecao.Baixo : if (Valido (bloco.x, bloco.z-1)) return mapa [bloco.x, bloco.z-1]; break;
 		case EDirecao.Direita : if (Valido (bloco.x+1, bloco.z)) return mapa [bloco.x+1, bloco.z]; break;
 		case EDirecao.Esquerda : if (Valido (bloco.x-1, bloco.z)) return mapa [bloco.x-1, bloco.z]; break;
@@ -158,13 +159,13 @@ public class Fase : MonoBehaviour {
 		return null;
 	}
 
-	public static bool Mover (Pessoa pessoa, EDirecao direcao) {
+	public static bool Mover (PessoaInfo pessoa, EDirecao direcao) {
 		BlocoInfo blocoOrigem = mapa[pessoa.x, pessoa.z];
 		BlocoInfo blocoAlvo = Vizinho (blocoOrigem, direcao);
 		if (blocoAlvo != null) {
 			if (Permitido (blocoOrigem, direcao)) {
 				blocoAlvo.pessoa = pessoa;
-				blocoOrigem.pessoa = Pessoa.nula;
+				blocoOrigem.pessoa = PessoaInfo.nula;
 				pessoa.x = blocoAlvo.x;
 				pessoa.z = blocoAlvo.z;
 				return true;
