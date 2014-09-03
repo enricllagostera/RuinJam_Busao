@@ -12,6 +12,7 @@ public class PessoaInfo {
 		parada = -1;
 		x = -1;
 		z = -1;
+		bilhete = false;
 	}
 
 	public static PessoaInfo nula = new PessoaInfo();

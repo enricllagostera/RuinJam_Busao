@@ -14,7 +14,7 @@ public class BlocoInfo {
 		z = pZ;
 		tipo = ETipo.Vazio;
 		direcao = EDirecao.Direita;
-		pessoa = null;
+		pessoa = PessoaInfo.nula;
 	}
 }
 
@@ -22,7 +22,8 @@ public enum ETipo {
 	Vazio,
 	Parede,
 	Cadeira,
-	Porta
+	Porta,
+	Catraca
 }
 
 public enum EDirecao {
@@ -50,27 +51,6 @@ public class Fase : MonoBehaviour {
 			}
 		}
 	}
-	
-	// Debug
-	/*
-	void OnDrawGizmos () {
-		for (int i = 0; i < mapa.GetLength(0); i++) {
-			for (int j = 0; j < mapa.GetLength(1); j++) {
-				Vector3 pos = transform.position + new Vector3 (i * tamanhoBloco, 0, j * tamanhoBloco);
-				if (mapa[i, j].tipo == ETipo.Vazio) {
-					Gizmos.color = Color.blue;
-				}
-				else if (mapa[i, j].tipo == ETipo.Parede) {
-					Gizmos.color = Color.red;
-				}
-				else if (mapa[i, j].tipo == ETipo.Cadeira) {
-					Gizmos.color = Color.yellow;
-				}
-				Gizmos.DrawCube (pos, Vector3.one * 0.5f);
-			}
-		}
-	}
-	*/
 
 	#region Statics
 	public static bool Permitido (BlocoInfo origem, EDirecao dirAlvo) {
@@ -84,8 +64,50 @@ public class Fase : MonoBehaviour {
 		}
 		BlocoInfo alvo = Vizinho (origem, dirAlvo);
 
+		if (alvo.pessoa != PessoaInfo.nula) {
+			if (Mover (alvo.pessoa, dirAlvo)) {
+				DebugGui.texto = "Licença.";
+			}
+			else {
+				DebugGui.texto = "Parou, parou!";
+				return false;
+			}
+		}
+
+		// caso especial: sair de cadeira pelos lados errados
 		if (origem.tipo == ETipo.Cadeira && (Mathf.Abs ((int) dirAlvo) == Mathf.Abs ((int) origem.direcao))){
 			return false;
+		}
+
+		// caso especial: voltar na catraca
+		if (alvo.tipo == ETipo.Catraca && dirOrigem == EDirecao.Esquerda) {
+			DebugGui.texto = "nao pode voltar na catraca";
+			return false;
+		}
+
+		// caso especial: tentando passar na catraca
+		if (alvo.tipo == ETipo.Catraca && dirOrigem == EDirecao.Direita) {
+			// se tem bilhete
+			if (origem.pessoa.bilhete) {
+				DebugGui.texto = "pagou a passagem";
+				origem.pessoa.bilhete = false;
+				return true;
+			}
+			else {
+				DebugGui.texto = "vc nao tem bilhete";
+				return false;
+			}
+		}
+		// saindo da catraca
+		if (origem.tipo == ETipo.Catraca) {
+			if (dirAlvo != EDirecao.Esquerda) {
+				DebugGui.texto = "pagou tem q passar";
+				return false;
+			}
+			else {
+				DebugGui.texto = "passou";
+				return true;
+			}
 		}
 
 		// dependendo do tipo do alvo

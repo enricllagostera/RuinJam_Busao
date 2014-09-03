@@ -18,7 +18,8 @@ public class Bloco : MonoBehaviour {
 		info.z = Mathf.FloorToInt(transform.position.z);
 		info = Fase.mapa[info.x, info.z];
 		if (snap) {
-			transform.position = new Vector3 (info.x, transform.position.y, info.z);
+			Vector3 alvo = new Vector3 (info.x, transform.position.y, info.z);
+			transform.position = Vector3.Lerp (transform.position, alvo, Time.deltaTime);
 		}
 	}
 }
