@@ -329,6 +329,7 @@ MonoBehaviour:
       x: -1
       z: -1
       bilhete: 0
+      direcao: 2
   snap: 1
 --- !u!1001 &100100000
 Prefab:

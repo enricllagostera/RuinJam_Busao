@@ -2,37 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class BlocoInfo {
-	public ETipo tipo;
-	public EDirecao direcao;
-	public int x;
-	public int z;
-	public PessoaInfo pessoa;
-	public BlocoInfo (int pX, int pZ) {
-		x = pX;
-		z = pZ;
-		tipo = ETipo.Vazio;
-		direcao = EDirecao.Direita;
-		pessoa = PessoaInfo.nula;
-	}
-}
-
-public enum ETipo {
-	Vazio,
-	Parede,
-	Cadeira,
-	Porta,
-	Catraca
-}
-
-public enum EDirecao {
-	Cima = 1,
-	Direita = 2,
-	Baixo = -1,
-	Esquerda = -2
-}
-
 public class Fase : MonoBehaviour {
 
 	public static BlocoInfo[,] mapa;
