@@ -5,7 +5,7 @@ public class Pessoa : MonoBehaviour
 {
 	public PessoaInfo info;
 	public float velocidade = 20f;
-	private Vector3 posicaoPai;
+	public Transform seta;
 
 	void Start () {
 		info.x = Mathf.FloorToInt(transform.localPosition.x);
@@ -20,15 +20,25 @@ public class Pessoa : MonoBehaviour
 		transform.localPosition = Vector3.Lerp (transform.localPosition, alvo, Time.deltaTime * velocidade);
 
 		switch (info.direcao) {
-			case EDirecao.Direita : transform.localEulerAngles = new Vector3(0, 90, 0); break;
-			case EDirecao.Esquerda : transform.localEulerAngles = new Vector3(0, -90, 0); break;
-			case EDirecao.Cima : transform.localEulerAngles = new Vector3(0, 0, 0); break;
-			case EDirecao.Baixo : transform.localEulerAngles = new Vector3(0, 180, 0); break;
+			case EDirecao.Direita : 
+				transform.localEulerAngles = new Vector3(0, 90, 0); 
+				break;
+			case EDirecao.Esquerda : 
+				transform.localEulerAngles = new Vector3(0, -90, 0); 
+				break;
+			case EDirecao.Cima : 
+				transform.localEulerAngles = new Vector3(0, 0, 0); 
+				break;
+			case EDirecao.Baixo : 
+				transform.localEulerAngles = new Vector3(0, 180, 0); 
+				break;
 		}
-
+		//Quaternion rotacao = seta.rotation;
 		if (Fase.mapa[info.x, info.z].tipo == ETipo.Cadeira) {
 			transform.localEulerAngles = new Vector3(0, 90, 0);
+			//seta.rotation = rotacao;
 		}
+
 	}
 }
 
