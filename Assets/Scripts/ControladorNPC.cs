@@ -7,6 +7,7 @@ public class ControladorNPC : MonoBehaviour
 	public float intervaloMovimento;
 	
 	void Start () {
+		intervaloMovimento = intervaloMovimento + intervaloMovimento * Random.Range(-0.5f, 0.5f);
 		_pessoa = GetComponent<Pessoa>().info;
 		StartCoroutine("Mover");
 	}
