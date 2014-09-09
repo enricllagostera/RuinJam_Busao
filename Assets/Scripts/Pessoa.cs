@@ -48,6 +48,9 @@ public class Pessoa : MonoBehaviour
 				DebugGui.texto = "Mais gente!";
 
 			}
+			else if (info.jogador == true && info.x > 7) {
+				// nada
+			}
 			else {
 				DebugGui.texto = "Tem gente saindo.";
 				GerenteSom.i.audio.PlayOneShot(GerenteSom.i.descer);
