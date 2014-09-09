@@ -6,6 +6,7 @@ public class ControladorPersonagem : MonoBehaviour {
 
 	void Start () {
 		_pessoa = GetComponent<Pessoa>().info;
+		_pessoa.jogador = true;
 	}
 
 	// Update is called once per frame

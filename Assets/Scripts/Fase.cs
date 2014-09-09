@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Prime31.MessageKit;
 
 public class Fase : MonoBehaviour {
 
@@ -11,6 +12,8 @@ public class Fase : MonoBehaviour {
 	public int altura;
 	public float tamanhoBloco;
 
+	private Animator _anim;
+
 	// Use this for initialization
 	void Awake () {
 		mapa = new BlocoInfo[largura, altura];
@@ -19,7 +22,27 @@ public class Fase : MonoBehaviour {
 				mapa[i, j] = new BlocoInfo (i, j);
 			}
 		}
+		_anim = GetComponent<Animator>();
 	}
+
+	void Start () {
+		// controle de animacao
+		MessageKit.addObserver (Eventos.Andar, QuandoAndar);
+		MessageKit.addObserver (Eventos.Parar, QuandoParar);
+	}
+
+	void QuandoAndar () {
+		_anim.SetTrigger("Andando");
+	}
+
+	void QuandoParar () {
+		_anim.SetTrigger("Parando");
+	}
+
+	void OnDestroy () {
+		MessageKit.clearMessageTable();
+	}
+
 
 	#region Statics
 	public static bool Permitido (BlocoInfo origem, EDirecao dirAlvo) {
@@ -28,13 +51,14 @@ public class Fase : MonoBehaviour {
 
 		// checa se alvo existe
 		if (!Valido (origem, dirAlvo)) {
-			print ("permitido: invalido");
+			//print ("permitido: invalido");
 			return false;
 		}
 		BlocoInfo alvo = Vizinho (origem, dirAlvo);
 
 		if (alvo.pessoa != PessoaInfo.nula) {
 			if (Mover (alvo.pessoa, dirAlvo)) {
+				GerenteSom.i.audio.PlayOneShot (GerenteSom.i.empurrao);
 				DebugGui.texto = "Licença.";
 			}
 			else {
@@ -50,7 +74,7 @@ public class Fase : MonoBehaviour {
 
 		// caso especial: voltar na catraca
 		if (alvo.tipo == ETipo.Catraca && dirOrigem == EDirecao.Esquerda) {
-			DebugGui.texto = "nao pode voltar na catraca";
+			DebugGui.texto = "Pagou, não volta mais.";
 			return false;
 		}
 
@@ -58,12 +82,12 @@ public class Fase : MonoBehaviour {
 		if (alvo.tipo == ETipo.Catraca && dirOrigem == EDirecao.Direita) {
 			// se tem bilhete
 			if (origem.pessoa.bilhete) {
-				DebugGui.texto = "pagou a passagem";
+				DebugGui.texto = "Pagou a passagem";
 				origem.pessoa.bilhete = false;
 				return true;
 			}
 			else {
-				DebugGui.texto = "vc nao tem bilhete";
+				DebugGui.texto = "Voce tah sem bilhete";
 				return false;
 			}
 		}
@@ -81,30 +105,32 @@ public class Fase : MonoBehaviour {
 
 		// dependendo do tipo do alvo
 		switch (alvo.tipo) {
-		case ETipo.Parede : print ("permitido: parede"); return false;
-		case ETipo.Vazio : print ("permitido: vazio"); return true; // a melhorar
+		case ETipo.Parede : //print ("permitido: parede"); 
+			return false;
+		case ETipo.Vazio : //print ("permitido: vazio"); 
+			return true; // a melhorar
 		case ETipo.Porta : 
 			if (alvo.pessoa == PessoaInfo.nula) {
-				print ("permitido: porta vazia");
+				//print ("permitido: porta vazia");
 				return true;
 			}
-			print ("permitido: porta cheia");
+			//print ("permitido: porta cheia");
 			return false;
 		case ETipo.Cadeira : 
 			// nao tem ninguem na cadeira
 			if (alvo.pessoa == PessoaInfo.nula) {
 				if ( Mathf.Abs ((int) dirOrigem) == Mathf.Abs ((int) alvo.direcao) ) {
-					print ("cadeira vazia, direcao ruim");
+					//print ("cadeira vazia, direcao ruim");
 					return false;
 				} 
 				else {
-					print ("cadeira vazia, direcao ok");
+					//print ("cadeira vazia, direcao ok");
 					return true;
 				}
 			}
 			// tem alguem na cadeira
 			else {
-				print ("tem alguem na cadeira");
+				//print ("tem alguem na cadeira");
 				// tem espaco pra empurrar
 				/*
 				if (Permitido (Vizinho (alvo, dirAproximacao), dirAproximacao)) {
@@ -159,11 +185,15 @@ public class Fase : MonoBehaviour {
 				blocoOrigem.pessoa = PessoaInfo.nula;
 				pessoa.x = blocoAlvo.x;
 				pessoa.z = blocoAlvo.z;
+
+				// debug pessoa moveu
+				if (pessoa.jogador) GerenteSom.i.audio.PlayOneShot(GerenteSom.i.mover);
+
 				return true;
 			}
-			print ("nao permitido");
+			//print ("nao permitido");
 		}
-		print ("alvo nulo");
+		//print ("alvo nulo");
 		return false;
 	}
 	#endregion

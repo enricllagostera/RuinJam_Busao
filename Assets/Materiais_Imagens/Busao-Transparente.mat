@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Busao 1
+  m_Name: Busao-Transparente
   m_Shader: {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
@@ -18,11 +18,11 @@ Material:
           name: _MainTex
         second:
           m_Texture: {fileID: 2800000, guid: d4ae0fad78a866e4db9ed70e42c86706, type: 3}
-          m_Scale: {x: 5, y: 5}
+          m_Scale: {x: 3, y: 3}
           m_Offset: {x: 0, y: 0}
     m_Floats: {}
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: .786764741, g: .786764741, b: .786764741, a: 1}
+        second: {r: .418685108, g: .714291334, b: .889705896, a: 1}

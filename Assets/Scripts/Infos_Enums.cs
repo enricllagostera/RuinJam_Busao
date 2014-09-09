@@ -14,6 +14,15 @@ public static class Utils {
 	}
 }
 
+public static class Eventos {
+	public const int Comecou = 10;
+	public const int Andar = 0;
+	public const int Parar = 1;
+	public const int Saiu = 2;
+	public const int Desceu = 3;
+	public const int Acabou = 20;
+}
+
 
 #region Infos
 [System.Serializable]
@@ -34,6 +43,7 @@ public class BlocoInfo {
 
 [System.Serializable]
 public class PessoaInfo {
+	public bool jogador;
 	public int parada;
 	public int x;
 	public int z;
@@ -46,6 +56,7 @@ public class PessoaInfo {
 		z = -1;
 		bilhete = false;
 		direcao = EDirecao.Direita;
+		jogador = false;
 	}
 	
 	public static PessoaInfo nula = new PessoaInfo();
@@ -53,6 +64,13 @@ public class PessoaInfo {
 #endregion
 
 #region Enums
+public enum EEtapa {
+	Inicio,
+	Andando,
+	Parando,
+	Final
+}
+
 public enum ETipo {
 	Vazio,
 	Parede,
