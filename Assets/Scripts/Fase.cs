@@ -56,7 +56,7 @@ public class Fase : MonoBehaviour {
 		}
 		BlocoInfo alvo = Vizinho (origem, dirAlvo);
 
-		if (alvo.pessoa != PessoaInfo.nula) {
+		if (!PessoaInfo.Vazia (alvo.pessoa)) {
 			if (Mover (alvo.pessoa, dirAlvo)) {
 				GerenteSom.i.audio.PlayOneShot (GerenteSom.i.empurrao);
 				DebugGui.texto = "Licença.";
@@ -110,7 +110,7 @@ public class Fase : MonoBehaviour {
 		case ETipo.Vazio : //print ("permitido: vazio"); 
 			return true; // a melhorar
 		case ETipo.Porta : 
-			if (alvo.pessoa == PessoaInfo.nula) {
+			if (PessoaInfo.Vazia (alvo.pessoa)) {
 				//print ("permitido: porta vazia");
 				return true;
 			}
@@ -118,7 +118,7 @@ public class Fase : MonoBehaviour {
 			return false;
 		case ETipo.Cadeira : 
 			// nao tem ninguem na cadeira
-			if (alvo.pessoa == PessoaInfo.nula) {
+			if (PessoaInfo.Vazia (alvo.pessoa)) {
 				if ( Mathf.Abs ((int) dirOrigem) == Mathf.Abs ((int) alvo.direcao) ) {
 					//print ("cadeira vazia, direcao ruim");
 					return false;
@@ -177,12 +177,15 @@ public class Fase : MonoBehaviour {
 	}
 
 	public static bool Mover (PessoaInfo pessoa, EDirecao direcao) {
+		if (PessoaInfo.Vazia (pessoa)) {
+			return false;
+		}
 		BlocoInfo blocoOrigem = mapa[pessoa.x, pessoa.z];
 		BlocoInfo blocoAlvo = Vizinho (blocoOrigem, direcao);
 		if (blocoAlvo != null) {
 			if (Permitido (blocoOrigem, direcao)) {
 				blocoAlvo.pessoa = pessoa;
-				blocoOrigem.pessoa = PessoaInfo.nula;
+				blocoOrigem.pessoa = new PessoaInfo ();
 				pessoa.x = blocoAlvo.x;
 				pessoa.z = blocoAlvo.z;
 

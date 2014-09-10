@@ -37,14 +37,14 @@ public class BlocoInfo {
 		z = pZ;
 		tipo = ETipo.Vazio;
 		direcao = EDirecao.Direita;
-		pessoa = PessoaInfo.nula;
+		pessoa = new PessoaInfo ();
 	}
 }
 
 [System.Serializable]
 public class PessoaInfo {
 	public bool jogador;
-	public int parada;
+	public int parada = -1;
 	public int x;
 	public int z;
 	public bool bilhete = true;
@@ -58,8 +58,10 @@ public class PessoaInfo {
 		direcao = EDirecao.Direita;
 		jogador = false;
 	}
-	
-	public static PessoaInfo nula = new PessoaInfo();
+
+	public static bool Vazia (PessoaInfo info) {
+		return info.parada < 0;
+	}
 }
 #endregion
 

@@ -5,7 +5,7 @@ using Prime31.MessageKit;
 public class Jogo : MonoBehaviour {
 
 	public static EEtapa etapa;
-	public bool fimDeJogo;
+	public static bool fimDeJogo;
 	private bool mudo;
 	public int parada;
 	public int paradaAlvo;

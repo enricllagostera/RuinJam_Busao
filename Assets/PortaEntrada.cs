@@ -19,7 +19,7 @@ public class PortaEntrada : MonoBehaviour {
 		if (Jogo.etapa == EEtapa.Parando) {
 			timer += Time.deltaTime;
 			if (timer > intervalo) {
-				if (_info.pessoa == PessoaInfo.nula) {
+				if (PessoaInfo.Vazia(_info.pessoa)) {
 					Transform novo = Instantiate (prefabPessoa, transform.position + new Vector3(0.1f, 0, 0.1f), Quaternion.identity) as Transform;
 					novo.parent = pai;
 					novo.GetComponent<Pessoa>().info.direcao = EDirecao.Cima;
